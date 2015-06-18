@@ -1,16 +1,18 @@
 package dao
 
 import org.joda.time.format.DateTimeFormat
-import scala.concurrent.Future
-import javax.inject.Inject
+import javax.inject.{ Inject, Singleton }
 import models.User
 import org.joda.time.LocalDate
 import play.api.db.slick.DatabaseConfigProvider
-import play.api.db.slick.HasDatabaseConfigProvider
-//import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import slick.driver.JdbcProfile
+import scala.concurrent.{ Future, ExecutionContext }
 
-class UserDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) extends HasDatabaseConfigProvider[JdbcProfile] {
+@Singleton
+class UserDAO @Inject()(dbConfigProvider: DatabaseConfigProvider)(implicit ec: ExecutionContext) {
+
+  private val dbConfig = dbConfigProvider.get[JdbcProfile]
+  import dbConfig._
   import driver.api._
 
   private val Users = TableQuery[UsersTable]
